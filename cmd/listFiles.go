@@ -21,6 +21,8 @@ var listFilesCmd = &cobra.Command{
 		green := color.New(color.FgGreen).SprintFunc()
 		blue := color.New(color.FgBlue).SprintFunc()
 
+		fostatus, _ := cmd.Flags().GetBool("fo")
+
 		// Reads from current directory hence the ./
 		// files returns a slice ([]fs.FileInfo) of memory addresses
 		// files[0] returns a single file and it's information containing memory addresses
@@ -33,10 +35,14 @@ var listFilesCmd = &cobra.Command{
 		})
 
 		for _, f := range files {
-			if f.IsDir() {
-				fmt.Printf("%s ", blue("DIRECTORY"))
+			if fostatus {
+				fmt.Printf("%s %s bytes \n", green(f.Name()), red(f.Size()))
+			} else {
+				if f.IsDir() {
+					fmt.Printf("%s ", blue("DIRECTORY"))
+				}
+				fmt.Printf("%s %s bytes \n", green(f.Name()), red(f.Size()))
 			}
-			fmt.Printf("%s %s bytes \n", green(f.Name()), red(f.Size()))
 		}
 
 	},
@@ -54,6 +60,7 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// listFilesCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	listFilesCmd.Flags().BoolP("fo", "f", false, "Toggle for files only.")
 }
 
 // list-files: all files & directories
